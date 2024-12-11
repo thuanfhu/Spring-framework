@@ -1,6 +1,5 @@
 package vn.thuanflu.identityservices.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -8,10 +7,10 @@ import java.time.LocalDate;
 public class UserCreationRequest {
     private String username;
 
-    @Size(min = 8, message = "Password must be 8 characters")
+    @Size(min = 8, message = "PASSWORD_MIN")
     private String password;
 
-    @Size(min = 3, message = "First name must be 3 characters")
+    @Size(min = 3, message = "FIRSTNAME_MIN")
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
