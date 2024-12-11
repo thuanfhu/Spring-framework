@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
+import vn.thuanflu.identityservices.dto.response.ApiResponse;
 import vn.thuanflu.identityservices.entity.User;
 import vn.thuanflu.identityservices.service.UserService;
 
@@ -19,8 +20,10 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Valid UserCreationRequest request){
-        return this.userService.createUser(request);
+    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(this.userService.createUser(request));
+        return apiResponse;
     }
 
     @GetMapping

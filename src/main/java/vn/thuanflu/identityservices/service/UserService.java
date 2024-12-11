@@ -1,10 +1,11 @@
 package vn.thuanflu.identityservices.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
 import vn.thuanflu.identityservices.entity.User;
+import vn.thuanflu.identityservices.exception.AppException;
+import vn.thuanflu.identityservices.exception.ErrorCode;
 import vn.thuanflu.identityservices.repository.UserRepository;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class UserService {
         User user = new User();
 
         if(userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("User existed. Please use another username!");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         user.setFirstName(request.getFirstName());
@@ -38,7 +39,7 @@ public class UserService {
     }
 
     public User getUserById(String id){
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
     public User updateUserById(String id, UserUpdateRequest request){
