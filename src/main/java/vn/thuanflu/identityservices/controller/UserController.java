@@ -1,5 +1,6 @@
 package vn.thuanflu.identityservices.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody UserCreationRequest request){
+    public User createUser(@RequestBody @Valid UserCreationRequest request){
         return this.userService.createUser(request);
     }
 
