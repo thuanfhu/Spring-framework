@@ -6,4 +6,5 @@ import vn.thuanflu.identityservices.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
+    boolean existsByUsername(String username);
 }
