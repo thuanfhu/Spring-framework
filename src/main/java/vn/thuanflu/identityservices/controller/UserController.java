@@ -1,6 +1,9 @@
 package vn.thuanflu.identityservices.controller;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
@@ -13,12 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
-
-    UserController(UserService userService) {
-        this.userService = userService;
-    }
+    UserService userService;
 
     @PostMapping
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
