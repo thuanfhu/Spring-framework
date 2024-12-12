@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
 import vn.thuanflu.identityservices.dto.response.ApiResponse;
+import vn.thuanflu.identityservices.dto.response.UserResponse;
 import vn.thuanflu.identityservices.entity.User;
 import vn.thuanflu.identityservices.service.UserService;
 
@@ -20,24 +21,24 @@ public class UserController {
     }
 
     @PostMapping
-    public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
-        ApiResponse<User> apiResponse = new ApiResponse<>();
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(this.userService.createUser(request));
         return apiResponse;
     }
 
     @GetMapping
-    public List<User> getAllUsers(){
+    public List<UserResponse> getAllUsers(){
         return this.userService.getAllUsers();
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable("userId") String id){
+    public UserResponse getUserById(@PathVariable("userId") String id){
         return this.userService.getUserById(id);
     }
 
     @PutMapping("/{userId}")
-    public User updateUserById(@PathVariable String userId, @RequestBody UserUpdateRequest request){
+    public UserResponse updateUserById(@PathVariable String userId, @RequestBody UserUpdateRequest request){
         return this.userService.updateUserById(userId, request);
     }
 
