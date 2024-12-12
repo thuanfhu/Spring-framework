@@ -1,57 +1,24 @@
 package vn.thuanflu.identityservices.dto.request;
 
 import jakarta.validation.constraints.Size;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class UserCreationRequest {
-    private String username;
+    String username;
 
     @Size(min = 8, message = "PASSWORD_MIN")
-    private String password;
+    String password;
 
     @Size(min = 3, message = "FIRSTNAME_MIN")
-    private String firstName;
-    private String lastName;
-    private LocalDate birthDate;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+    String firstName;
+    String lastName;
+    LocalDate birthDate;
 }

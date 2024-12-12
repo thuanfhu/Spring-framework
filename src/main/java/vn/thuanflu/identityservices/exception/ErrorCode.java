@@ -1,5 +1,8 @@
 package vn.thuanflu.identityservices.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception"),
     INVALID_KEY(1001, "Invalid key"),
@@ -17,13 +20,5 @@ public enum ErrorCode {
     ErrorCode(int code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getCode() {
-        return code;
     }
 }
