@@ -21,10 +21,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
-        boolean result = this.authenticationService.authenticate(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("Đăng nhập thành công!")
-                .result(AuthenticationResponse.builder().authenticated(result).build())
+                .result(this.authenticationService.authenticate(request))
                 .build();
     }
 }

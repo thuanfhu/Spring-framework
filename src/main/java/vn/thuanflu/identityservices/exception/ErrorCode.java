@@ -12,6 +12,7 @@ public enum ErrorCode {
 
     PASSWORD_MIN(1004, "Password must be 8 characters"),
     FIRSTNAME_MIN(1005, "First name must be 3 characters"),
+    UNAUTHORIZED(1006, "Unauthorized"),
 
     ;
     private final int code;
