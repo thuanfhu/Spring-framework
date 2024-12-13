@@ -2,20 +2,27 @@ package vn.thuanflu.identityservices.service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.thuanflu.identityservices.dto.request.AuthenticationRequest;
+import vn.thuanflu.identityservices.dto.request.IntrospectRequest;
 import vn.thuanflu.identityservices.dto.response.AuthenticationResponse;
+import vn.thuanflu.identityservices.dto.response.IntrospectResponse;
 import vn.thuanflu.identityservices.entity.User;
 import vn.thuanflu.identityservices.exception.AppException;
 import vn.thuanflu.identityservices.exception.ErrorCode;
 import vn.thuanflu.identityservices.repository.UserRepository;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -26,7 +33,9 @@ import java.util.Date;
 public class AuthenticationService {
     UserRepository userRepository;
 
-    protected static final String SIGNER_KEY = "+9jcTqa2wQEddDWtn3KdCrIyalW7PKZ0G2Lx3T6QM2rk2LFHZ+6D5XnYeLYyZE6s";
+    @NonFinal // don't inject in constructor
+    @Value("${jwt.signerKey}") // read value from file application.yaml
+    protected String SIGNER_KEY;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         User currentUser = this.userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -36,28 +45,43 @@ public class AuthenticationService {
         if (!authenticated) throw new AppException(ErrorCode.UNAUTHORIZED);
 
         // Create and issue token for user login
-        String token = this.generateToken(request.getUsername());
+        String token = this.generateToken(currentUser.getUsername(), currentUser.getId());
         return AuthenticationResponse.builder()
                 .authenticated(true)
                 .token(token)
                 .build();
     }
 
-    private String generateToken(String username) {
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+        String token = request.getToken();
+
+        // Verify token
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        boolean verified = signedJWT.verify(verifier);
+
+        // Check valid token and token expired
+        Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        return IntrospectResponse.builder()
+                .valid(verified && expirationTime.after(new Date()))
+                .build();
+    }
+
+    private String generateToken(String username, String userId) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
-                .issuer("thuanflu.com")
+                .issuer("thuanflu.com") // domain
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(30, ChronoUnit.MINUTES).toEpochMilli()))
-                .claim("customClaimKey", "value")
+                .claim("userId", userId)
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-            return jwsObject.serialize();
+            return jwsObject.serialize(); // Convert jwsObject to string
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
