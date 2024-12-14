@@ -10,11 +10,13 @@ import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
 import vn.thuanflu.identityservices.dto.response.UserResponse;
 import vn.thuanflu.identityservices.entity.User;
+import vn.thuanflu.identityservices.enums.Role;
 import vn.thuanflu.identityservices.exception.AppException;
 import vn.thuanflu.identityservices.exception.ErrorCode;
 import vn.thuanflu.identityservices.mapper.UserMapper;
 import vn.thuanflu.identityservices.repository.UserRepository;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -31,6 +33,10 @@ public class UserService {
         // Hash password before save
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Set default role USER for new user
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name()); user.setRoles(roles);
 
         userRepository.save(user);
         return userMapper.toUserResponse(user);
