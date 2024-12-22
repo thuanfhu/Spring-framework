@@ -44,7 +44,7 @@ public class AuthenticationService {
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10); // Compare password with Bcrypt Algorithm
         boolean authenticated = passwordEncoder.matches(request.getPassword(), currentUser.getPassword());
-        if (!authenticated) throw new AppException(ErrorCode.UNAUTHORIZED);
+        if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         // Create and issue token for user login
         String token = this.generateToken(currentUser);

@@ -1,25 +1,31 @@
 package vn.thuanflu.identityservices.exception;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception"),
-    INVALID_KEY(1001, "Invalid key"),
+    // General errors
+    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(1002, "Not authenticated!", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1003, "Access denied, you don't have permission to access this endpoint!", HttpStatus.FORBIDDEN),
 
-    USER_EXISTED(1002, "User already exists"),
-    USER_NOT_FOUND(1003, "User not found"),
-
-    PASSWORD_MIN(1004, "Password must be 8 characters"),
-    FIRSTNAME_MIN(1005, "First name must be 3 characters"),
-    UNAUTHORIZED(1006, "Unauthorized"),
+    // User errors
+    USER_EXISTED(1051, "User already exists", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1052, "User not found", HttpStatus.NOT_FOUND),
+    PASSWORD_MIN(1053, "Password must be 8 characters", HttpStatus.BAD_REQUEST),
+    FIRSTNAME_MIN(1054, "First name must be 3 characters", HttpStatus.BAD_REQUEST),
 
     ;
-    private final int code;
-    private final String message;
 
-    ErrorCode(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
+    int code;
+    String message;
+    HttpStatusCode statusCode;
 }
