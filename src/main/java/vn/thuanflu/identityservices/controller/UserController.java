@@ -48,4 +48,12 @@ public class UserController {
         this.userService.deleteUserById(userId);
         return "User has been deleted";
     }
+
+    @GetMapping("/account")
+    public ApiResponse<UserResponse> getUserAccount(){
+        return ApiResponse.<UserResponse>builder()
+                .message("Lấy thông tin người dùng đang đăng nhập thành công")
+                .result(this.userService.getMyInfo())
+                .build();
+    }
 }
