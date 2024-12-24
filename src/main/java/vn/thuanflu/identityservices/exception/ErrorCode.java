@@ -26,6 +26,9 @@ public enum ErrorCode {
     // Permission errors
     PERMISSION_NOT_FOUND(1101, "Permission not found", HttpStatus.NOT_FOUND),
 
+    // Role errors
+    ROLE_NOT_FOUND(1151, "Role not found", HttpStatus.NOT_FOUND),
+
     ;
 
     int code;

@@ -1,9 +1,6 @@
 package vn.thuanflu.identityservices.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,6 +14,10 @@ import lombok.experimental.FieldDefaults;
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    @Column(unique = true, nullable = false)
     String name;
+
     String description;
 }

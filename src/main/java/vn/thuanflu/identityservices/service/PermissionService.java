@@ -24,31 +24,27 @@ public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public PermissionResponse createPermission(PermissionRequest request) {
         return permissionMapper.toPermissionResponse(permissionRepository.save(permissionMapper.toPermission(request)));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public PermissionResponse getPermissionById(String id) {
         return permissionMapper.toPermissionResponse(permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<PermissionResponse> getAllPermissions() {
         List<Permission> permissions = permissionRepository.findAll();
         return permissions.stream().map(permissionMapper::toPermissionResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public PermissionResponse updatePermissionById(String id, PermissionRequest request) {
         Permission currentPermission = permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
         permissionMapper.updatePermission(currentPermission, request);
         return permissionMapper.toPermissionResponse(permissionRepository.save(currentPermission));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deletePermissionById(String id) {
+        permissionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
         this.permissionRepository.deleteById(id);
     }
 }

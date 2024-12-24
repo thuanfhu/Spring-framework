@@ -16,7 +16,11 @@ import java.util.Set;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    @Column(unique = true, nullable = false)
     String name;
+
     String description;
 
     @ManyToMany
