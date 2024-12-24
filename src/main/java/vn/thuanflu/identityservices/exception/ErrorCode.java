@@ -23,6 +23,9 @@ public enum ErrorCode {
     PASSWORD_MIN(1053, "Password must be 8 characters", HttpStatus.BAD_REQUEST),
     FIRSTNAME_MIN(1054, "First name must be 3 characters", HttpStatus.BAD_REQUEST),
 
+    // Permission errors
+    PERMISSION_NOT_FOUND(1101, "Permission not found", HttpStatus.NOT_FOUND),
+
     ;
 
     int code;

@@ -14,7 +14,6 @@ import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
 import vn.thuanflu.identityservices.dto.response.UserResponse;
 import vn.thuanflu.identityservices.entity.User;
-import vn.thuanflu.identityservices.enums.Role;
 import vn.thuanflu.identityservices.exception.AppException;
 import vn.thuanflu.identityservices.exception.ErrorCode;
 import vn.thuanflu.identityservices.mapper.UserMapper;

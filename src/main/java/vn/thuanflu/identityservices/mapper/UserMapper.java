@@ -1,7 +1,6 @@
 package vn.thuanflu.identityservices.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
