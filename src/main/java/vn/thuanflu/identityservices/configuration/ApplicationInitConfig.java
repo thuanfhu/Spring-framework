@@ -25,13 +25,13 @@ public class ApplicationInitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
             if(userRepository.findByUsername("admin@gmail.com").isEmpty()){
-                HashSet<String> roles = new HashSet<>();
-                roles.add(Role.ADMIN.name());
+                // HashSet<String> roles = new HashSet<>();
+                // roles.add(Role.ADMIN.name());
 
                 User user = User.builder()
                         .username("admin@gmail.com")
-                        .password(passwordEncoder.encode("admin"))
-                        .roles(roles).build();
+                        .password(passwordEncoder.encode("admin")).build();
+                        // .roles(roles).build();
 
                 userRepository.save(user);
                 log.info("Admin has created by default password: admin");
