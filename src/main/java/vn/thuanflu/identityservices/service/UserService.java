@@ -33,6 +33,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
+//    @PreAuthorize("hasAuthority('CREATE_USER')")
     public UserResponse createUser(UserCreationRequest request){
         if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
         User user = userMapper.toUser(request);
