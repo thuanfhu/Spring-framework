@@ -1,6 +1,7 @@
 package vn.thuanflu.identityservices.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
@@ -13,6 +14,7 @@ import java.util.List;
 public interface UserMapper {
     User toUser(UserCreationRequest request);
 
+    @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 
 //    @Mapping(source = "firstName", target = "lastName") // mapping field firstName (user) to field lastName (userResponse)

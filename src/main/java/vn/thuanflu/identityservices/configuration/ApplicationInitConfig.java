@@ -8,11 +8,14 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import vn.thuanflu.identityservices.entity.Role;
 import vn.thuanflu.identityservices.entity.User;
-import vn.thuanflu.identityservices.enums.Role;
+import vn.thuanflu.identityservices.exception.AppException;
+import vn.thuanflu.identityservices.exception.ErrorCode;
+import vn.thuanflu.identityservices.repository.RoleRepository;
 import vn.thuanflu.identityservices.repository.UserRepository;
 
-import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,21 +25,39 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
-            if(userRepository.findByUsername("admin@gmail.com").isEmpty()){
-                // HashSet<String> roles = new HashSet<>();
-                // roles.add(Role.ADMIN.name());
+            // Create default role
+            createRoleIfNotExists(roleRepository, vn.thuanflu.identityservices.enums.Role.ADMIN.name(), "Admin can access all endpoints");
+            createRoleIfNotExists(roleRepository, vn.thuanflu.identityservices.enums.Role.USER.name(), "User can access basic endpoints");
 
-                User user = User.builder()
-                        .username("admin@gmail.com")
-                        .password(passwordEncoder.encode("admin")).build();
-                        // .roles(roles).build();
-
-                userRepository.save(user);
-                log.info("Admin has created by default password: admin");
-            }
+            // Create default user with role
+            createUserIfNotExists(userRepository, roleRepository, "admin@gmail.com", "admin", vn.thuanflu.identityservices.enums.Role.ADMIN);
+            createUserIfNotExists(userRepository, roleRepository, "user@gmail.com", "user", vn.thuanflu.identityservices.enums.Role.USER);
         };
     }
 
+    private void createRoleIfNotExists(RoleRepository roleRepository, String roleName, String description) {
+        if (roleRepository.findByName(roleName).isEmpty()) {
+            Role role = Role.builder()
+                    .name(roleName)
+                    .description(description)
+                    .build();
+            roleRepository.save(role);
+            log.info("Created default role: {}", roleName);
+        }
+    }
+
+    private void createUserIfNotExists(UserRepository userRepository, RoleRepository roleRepository, String username, String password, vn.thuanflu.identityservices.enums.Role roleEnum) {
+        if (userRepository.findByUsername(username).isEmpty()) {
+            Role role = roleRepository.findByName(roleEnum.name()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+            User user = User.builder()
+                    .username(username)
+                    .password(passwordEncoder.encode(password))
+                    .roles(Set.of(role))
+                    .build();
+            userRepository.save(user);
+            log.info("Created default user: {} with role: {}", username, roleEnum.name());
+        }
+    }
 }

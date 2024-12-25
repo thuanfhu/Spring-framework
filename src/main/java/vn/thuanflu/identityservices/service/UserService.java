@@ -13,14 +13,15 @@ import org.springframework.stereotype.Service;
 import vn.thuanflu.identityservices.dto.request.UserCreationRequest;
 import vn.thuanflu.identityservices.dto.request.UserUpdateRequest;
 import vn.thuanflu.identityservices.dto.response.UserResponse;
+import vn.thuanflu.identityservices.entity.Role;
 import vn.thuanflu.identityservices.entity.User;
 import vn.thuanflu.identityservices.exception.AppException;
 import vn.thuanflu.identityservices.exception.ErrorCode;
 import vn.thuanflu.identityservices.mapper.UserMapper;
+import vn.thuanflu.identityservices.repository.RoleRepository;
 import vn.thuanflu.identityservices.repository.UserRepository;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ import java.util.List;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -39,8 +41,9 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Set default role USER for new user
-        HashSet<String> roles = new HashSet<>();
-        // roles.add(Role.USER.name()); user.setRoles(roles);
+        Role userRole = this.roleRepository.findByName(vn.thuanflu.identityservices.enums.Role.USER.name()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Set<Role> roles = new HashSet<>(); roles.add(userRole);
+        user.setRoles(roles);
 
         userRepository.save(user);
         return userMapper.toUserResponse(user);
@@ -58,7 +61,14 @@ public class UserService {
 
     public UserResponse updateUserById(String id, UserUpdateRequest request){
         User currentUser = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         userMapper.updateUser(currentUser, request);
+        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Update roles for user
+        List<Role> roles = this.roleRepository.findAllById(request.getRoleIds());
+        currentUser.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
 
